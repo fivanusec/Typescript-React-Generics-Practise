@@ -5,11 +5,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { useSortableData } from "../hooks/tableSort";
 
-interface TableDataProps<T> {
+interface TableDataProps<T> extends React.HTMLAttributes<HTMLElement> {
   data: T[];
+  renderItem: (element: T) => React.ReactNode;
 }
 
-export const TableData = <T extends {}>({ data }: TableDataProps<T>) => {
+export const TableData = <T extends {}>({
+  data,
+  renderItem,
+}: TableDataProps<T>) => {
   const { items, requestSort, sortConfig } = useSortableData<T>(data as T[]);
 
   const getClassNamesFor = (name: string) => {
@@ -73,12 +77,8 @@ export const TableData = <T extends {}>({ data }: TableDataProps<T>) => {
         </Tr>
       </Thead>
       <Tbody>
-        {items.map((e: any) => (
-          <Tr>
-            <Td>{e.first_name}</Td>
-            <Td>{e.last_name}</Td>
-            <Td>{e.date_of_birth}</Td>
-          </Tr>
+        {items.map((e: T, idx) => (
+          <Tr key={idx}>{renderItem(e)}</Tr>
         ))}
       </Tbody>
     </>
